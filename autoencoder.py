@@ -1,6 +1,3 @@
-#https://blog.keras.io/building-autoencoders-in-keras.html
-#https://arxiv.org/pdf/1801.05394.pdf
-
 from keras.layers import Input, Dense, Activation, Dropout
 from keras.models import Model, load_model
 from keras.datasets import mnist
@@ -38,7 +35,7 @@ csv_name = "extracted.csv";
 
 #set parameters for windows
 window_size = 50
-overlap = .0
+overlap = .10
 channels = 8
 
 #epochs
@@ -80,9 +77,10 @@ while data_i + window_size <= len(data):
 print("Total windows: " + str(len(windows)))
 
 #convert windows to numpy array
-# windows = np.array(windows).astype("float32")
-windows_train = np.array(windows[:len(windows)//2]).astype("float32")
-windows_test = np.array(windows[len(windows)//2:]).astype("float32")
+windows_train = np.array(windows).astype("float32")
+#windows_train = np.array(windows[:len(windows)//2]).astype("float32")
+#windows_test = np.array(windows[len(windows)//2:]).astype("float32")
+windows_test = windows_train
 
 #set data dimensions for layers
 # input_dim = len(windows[0])
@@ -102,36 +100,6 @@ encoded_input = Input(shape=(encoder_4_dim,))
 
 #if no argument passed to script
 if len(sys.argv) == 1 or (len(sys.argv) > 1 and sys.argv[1].isdigit()):
-    #layer structure
-    #encoded_1 = Dense(encoder_1_dim, activation="relu")(input_layer)
-    #tanh = Activation("relu")(encoded_1)
-    #drop = Dropout(.10)(tanh)
-
-    #encoded_2 = Dense(encoder_2_dim, activation="relu")(drop)
-    #tanh = Activation("relu")(encoded_2)
-    #drop = Dropout(.10)(tanh)
-
-    #encoded_3 = Dense(encoder_3_dim, activation="relu")(drop)
-    #tanh = Activation("relu")(encoded_3)
-    #drop = Dropout(.10)(tanh)
-
-    #encoded_4 = Dense(encoder_4_dim, activation="relu")(drop)
-
-    #decoded_1 = Dense(decoder_1_dim, activation="relu")(encoded_input)
-    #tanh = Activation("relu")(decoded_1)
-    #drop = Dropout(.10)(tanh)
-
-    #decoded_2 = Dense(decoder_2_dim, activation="relu")(drop)
-    #tanh = Activation("relu")(decoded_2)
-    #drop = Dropout(.10)(tanh)
-
-    #decoded_3 = Dense(decoder_3_dim, activation="relu")(drop)
-    #tanh = Activation("relu")(decoded_3)
-    #drop = Dropout(.10)(tanh)
-
-    #decoded_4 = Dense(decoder_4_dim, activation="sigmoid")(drop)
-
-
     encoded_1 = Dense(encoder_1_dim, activation="relu")(input_layer)
     encoded_2 = Dense(encoder_2_dim, activation="relu")(encoded_1)
     encoded_3 = Dense(encoder_3_dim, activation="relu")(encoded_2)
@@ -152,8 +120,6 @@ elif sys.argv[1] == "load":
     decoder = load_model("models/decoder.h5");
     autoencoder = Model(input_layer, decoder(encoder(input_layer)))
 
-#use stochastic gradient descent and MSE
-#   autoencoder.compile(optimizer='sgd', loss='mean_squared_error', metrics=["accuracy"])
 autoencoder.compile(optimizer='adadelta', loss='mean_squared_error', metrics=['accuracy'])
 
 #train the autoencoder

@@ -8,6 +8,7 @@ num_channels = int(sys.argv[1])
 data1 = []
 data2 = []
 window_size = 50
+thresh = 0.15
 
 with open("results/" + sys.argv[2] + ".csv") as csvfile:
     for row in csv.reader(csvfile, delimiter=","):
@@ -38,7 +39,12 @@ with open("results/distance.csv") as csvfile:
 
 dist = np.array(dist)
 maxI = argrelextrema(dist, np.greater)
-maxI = maxI[0]
+maxI = list(maxI[0])
+
+#for emg2
+gTruths = [550, 1000]
+#for emg3
+#gTruths = [1000, 2000, 2800, 3600]
 
 plt.plot(data1[chan][:points], label=sys.argv[2])
 
@@ -50,10 +56,19 @@ else:
             plt.plot(data1[i][:points], label=sys.argv[2])
 
 for i in maxI:
-    plt.axvline(x = i * window_size, color='r')
+    print(dist[i])
+    if maxI.index(i) != 0 and maxI.index(i) != len(maxI) - 1:
+        prevMax = dist[maxI[maxI.index(i) - 1]]
+        nextMax = dist[maxI[maxI.index(i) + 1]]
+
+        if dist[i] - prevMax > thresh or dist[i] - nextMax > thresh:
+            plt.axvline(x = i * window_size, color='r', ymin=0.5, ymax=1.0)
+
+for i in gTruths:
+    plt.axvline(x = i, color='b', ymin=-0.5, ymax=0.5)
 
 #plt.legend(loc='upper left')
-plt.axis([0, points, 0, 1.5])
+plt.axis([0, points, -0.5, 1.5])
 plt.show()
 
 #python plot_channels.py 8 original decoded 500 1
