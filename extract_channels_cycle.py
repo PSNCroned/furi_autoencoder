@@ -1,5 +1,6 @@
 import csv
 
+input_path = r"C:\Users\Elliot\Desktop\furi\original_datasets\myo_exp.csv"
 csv_name = "extracted.csv";
 
 i = 0
@@ -7,7 +8,7 @@ limit = 8000 * 3
 pointsAdded = 0
 res = ""
 
-with open (r"C:\Users\Elliot\Desktop\furi\original_datasets\myo_exp.csv") as csvfile:
+with open (input_path) as csvfile:
     reader = csv.reader(csvfile, delimiter=",")
 
     for row in reader:
@@ -23,7 +24,7 @@ with open (r"C:\Users\Elliot\Desktop\furi\original_datasets\myo_exp.csv") as csv
             "\n")
             i += 1
 
-with open (r"C:\Users\Elliot\Desktop\furi\original_datasets\myo_exp.csv") as csvfile:
+with open (input_path) as csvfile:
     reader = csv.reader(csvfile, delimiter=",")
 
     for row in reader:
@@ -39,7 +40,7 @@ with open (r"C:\Users\Elliot\Desktop\furi\original_datasets\myo_exp.csv") as csv
             "\n")
             i += 1
 
-with open (r"C:\Users\Elliot\Desktop\furi\original_datasets\myo_exp.csv") as csvfile:
+with open (input_path) as csvfile:
     reader = csv.reader(csvfile, delimiter=",")
 
     for row in reader:
