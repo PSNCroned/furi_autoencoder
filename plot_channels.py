@@ -8,7 +8,6 @@ num_channels = int(sys.argv[1])
 data1 = []
 data2 = []
 window_size = 50
-thresh = 0.15
 
 with open("results/" + sys.argv[2] + ".csv") as csvfile:
     for row in csv.reader(csvfile, delimiter=","):
@@ -29,7 +28,6 @@ if not sys.argv[3].isdigit():
     chan = int(sys.argv[5])
 else:
     points = int(sys.argv[3])
-    chan = int(sys.argv[4])
 
 dist = []
 
@@ -41,34 +39,30 @@ dist = np.array(dist)
 maxI = argrelextrema(dist, np.greater)
 maxI = list(maxI[0])
 
-#for emg2
-gTruths = [550, 1000]
-#for emg3
-#gTruths = [1000, 2000, 2800, 3600]
+gTruths = []
 
-plt.plot(data1[chan][:points], label=sys.argv[2])
 
 if not sys.argv[3].isdigit():
+    plt.plot(data1[chan][:points], label=sys.argv[2])
     plt.plot(data2[chan][:points], label=sys.argv[3])
 else:
     for i in range(0, num_channels):
-        if not (i == chan):
-            plt.plot(data1[i][:points], label=sys.argv[2])
+        plt.plot(data1[i][:points], label=sys.argv[2])
 
 for i in maxI:
-    print(dist[i])
     if maxI.index(i) != 0 and maxI.index(i) != len(maxI) - 1:
         prevMax = dist[maxI[maxI.index(i) - 1]]
         nextMax = dist[maxI[maxI.index(i) + 1]]
 
-        if dist[i] - prevMax > thresh or dist[i] - nextMax > thresh:
+        if dist[i] * 0.3 > prevMax or dist[i] * 0.3 > nextMax:
             plt.axvline(x = i * window_size, color='r', ymin=0.5, ymax=1.0)
 
 for i in gTruths:
     plt.axvline(x = i, color='b', ymin=-0.5, ymax=0.5)
 
-#plt.legend(loc='upper left')
+plt.legend(loc='upper left')
 plt.axis([0, points, -0.5, 1.5])
 plt.show()
 
-#python plot_channels.py 8 original decoded 500 1
+#python plot_channels.py 8 original decoded 5000 1
+#python plot_channels.py 8 original 5000
