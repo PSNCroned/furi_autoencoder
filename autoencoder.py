@@ -1,8 +1,6 @@
 from keras.layers import Input, Dense, Activation, Dropout
 from keras.models import Model, load_model
-from keras.datasets import mnist
 import numpy as np
-import matplotlib.pyplot as plt
 import csv
 import math
 import sys
@@ -31,7 +29,7 @@ def normalizeData (data):
 
         c += 1
 
-csv_name = "extracted.csv";
+csv_name = "extracted.csv"
 
 #set parameters for windows
 window_size = 50
@@ -77,10 +75,10 @@ while data_i + window_size <= len(data):
 print("Total windows: " + str(len(windows)))
 
 #convert windows to numpy array
-windows_train = np.array(windows).astype("float32")
-#windows_train = np.array(windows[:len(windows)//2]).astype("float32")
-#windows_test = np.array(windows[len(windows)//2:]).astype("float32")
-windows_test = windows_train
+#windows_train = np.array(windows).astype("float32")
+#windows_test = windows_train
+windows_train = np.array(windows[:len(windows)//2]).astype("float32")
+windows_test = np.array(windows[len(windows)//2:]).astype("float32")
 
 #set data dimensions for layers
 # input_dim = len(windows[0])
@@ -116,8 +114,8 @@ if len(sys.argv) == 1 or (len(sys.argv) > 1 and sys.argv[1].isdigit()):
 
 elif sys.argv[1] == "load":
     #load the autoencoder model and construct the encoder/decoder from it
-    encoder = load_model("models/encoder.h5");
-    decoder = load_model("models/decoder.h5");
+    encoder = load_model("models/encoder.h5")
+    decoder = load_model("models/decoder.h5")
     autoencoder = Model(input_layer, decoder(encoder(input_layer)))
 
 autoencoder.compile(optimizer='adadelta', loss='mean_squared_error', metrics=['accuracy'])
@@ -132,8 +130,8 @@ autoencoder.fit(
 )
 
 #save models
-encoder.save("models/encoder.h5");
-decoder.save("models/decoder.h5");
+encoder.save("models/encoder.h5")
+decoder.save("models/decoder.h5")
 
 #get encoded and decoded data
 encoded_data = encoder.predict(windows_test)

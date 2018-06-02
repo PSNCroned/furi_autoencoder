@@ -5,9 +5,14 @@ const dgram = require("dgram");
 const client = dgram.createSocket("udp4");
 
 var listeners = function (myo) {
+    const win = 40;
+    const mode = "send";
+    const filename = "fist.csv";
+    const timeOnStart = Date.now();
+    const duration = 100;
+    const dataLimit = 100;
+
     var res = "";
-    var time = Date.now();
-    var win = 40;
     var saved = false;
     var i = 0;
 
@@ -16,9 +21,32 @@ var listeners = function (myo) {
     });
 
     myo.on("emg", function (data) {
-        client.send(data.toString(), 41234, "localhost", function (err) {
-            console.log(data);
-        });
+        data = data.toString();
+
+        switch (mode) {
+            case "save":
+                if (!saved) {
+                    res += (data + "\n");
+                    i++;
+                    console.log(i);
+
+                    if ((Date.now() - timeOnStart) / 1000 > duration || i >= dataLimit) {
+                        saved = true;
+                        fs.writeFile("./data/" + filename, res, (err) => {
+                            if (err)
+                                console.log("Error saving data: " + err);
+                            else
+                                console.log("Data saved");
+                        });
+                    }
+                }
+                break;
+            case "send":
+                client.send(data.toString(), 41234, "localhost", function (err) {
+                    console.log(data);
+                });
+                break;
+        }
     });
 };
 
